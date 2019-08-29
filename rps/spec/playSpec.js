@@ -1,6 +1,9 @@
 function Requests() {
     this.play = (p1Throw, p2Throw, observer) => {
-        if (p1Throw === p2Throw) {
+        if (!['rock', 'scissors', 'paper'].includes(p1Throw) ||
+            !['rock', 'scissors', 'paper'].includes(p2Throw)) {
+            observer.invalid()
+        } else if (p1Throw === p2Throw) {
             observer.tie()
         } else if (p1Throw === 'rock' && p2Throw === 'scissors' ||
             p1Throw === 'scissors' && p2Throw === 'paper' ||
@@ -42,7 +45,7 @@ describe('play', function () {
     describe('p2 Wins scenarios', function () {
         beforeEach(() => {
             observer = jasmine.createSpyObj("observer", ["p2Wins"]);
-        })
+        });
 
         it('scissors v rock', function () {
             new Requests().play('scissors', 'rock', observer);
@@ -65,7 +68,7 @@ describe('play', function () {
         describe('tie scenarios', function () {
             beforeEach(() => {
                 observer = jasmine.createSpyObj("observer", ["tie"]);
-            })
+            });
 
             it('scissors v rock', function () {
                 new Requests().play('rock', 'rock', observer);
@@ -83,6 +86,24 @@ describe('play', function () {
                 new Requests().play('paper', 'paper', observer);
 
                 expect(observer.tie).toHaveBeenCalled()
+            });
+        });
+
+        describe('invalid scenarios', function () {
+            beforeEach(() => {
+                observer = jasmine.createSpyObj("observer", ["invalid"]);
+            });
+
+            it('invalid v rock', function () {
+                new Requests().play(Math.random(), 'rock', observer);
+
+                expect(observer.invalid).toHaveBeenCalled()
+            });
+
+            it('rock v invalid', function () {
+                new Requests().play('rock', Math.random(), observer);
+
+                expect(observer.invalid).toHaveBeenCalled()
             });
         });
     });
