@@ -1,18 +1,23 @@
 function Requests() {
-    this.play = (p1Throw, p2Throw, observer) => {
-        new PlayRoundRequest(p1Throw, p2Throw, observer).process()
+    this.play = (p1Throw, p2Throw, observer, repo) => {
+        new PlayRoundRequest(p1Throw, p2Throw, observer, repo).process()
     }
 
-    this.getHistory = (observer) => {
-        observer.noRounds()
+    this.getHistory = (observer, repo) => {
+        if (repo.isEmpty()) {
+            observer.noRounds()
+        } else {
+            observer.rounds(repo.getRounds())
+        }
     }
 }
 
-function PlayRoundRequest(p1Throw, p2Throw, observer) {
+function PlayRoundRequest(p1Throw, p2Throw, observer, repo) {
     this.process = () => {
         if (isInvalidThrow(p1Throw) ||
             isInvalidThrow(p2Throw)) {
             observer.invalid()
+            repo.addRound(new Round(p1Throw, p2Throw, 'invalid'))
         } else if (tieScenario()) {
             observer.tie()
         } else if (p1WinsScenario()) {
@@ -45,4 +50,10 @@ function PlayRoundRequest(p1Throw, p2Throw, observer) {
     const VALID_THROWS = [THROW.ROCK, THROW.SCISSORS, THROW.PAPER]
 }
 
-module.exports = {Requests}
+function Round(p1Throw, p2Throw, result) {
+    this.p1Throw = p1Throw
+    this.p2Throw = p2Throw
+    this.result = result
+}
+
+module.exports = {Requests, Round}
