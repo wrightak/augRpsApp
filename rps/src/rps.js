@@ -2,6 +2,10 @@ function Requests() {
     this.play = (p1Throw, p2Throw, observer) => {
         new PlayRoundRequest(p1Throw, p2Throw, observer).process()
     }
+
+    this.getHistory = (observer) => {
+        observer.noRounds()
+    }
 }
 
 function PlayRoundRequest(p1Throw, p2Throw, observer) {
